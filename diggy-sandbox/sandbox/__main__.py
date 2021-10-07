@@ -25,7 +25,7 @@ def main() -> None:
         nsjail = NsJail(nsjail_config=NSJAIL_SYSTEM_CFG)
         result = nsjail.system(args.command.split(' '))
     else:
-        nsjail = Nsjail()
+        nsjail = NsJail()
         result = nsjail.run(username=args.username, filename=args.filename)
 
     print(result.stdout)
