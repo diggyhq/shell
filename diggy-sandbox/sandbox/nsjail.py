@@ -202,16 +202,27 @@ class NsJail:
         if lang is None:
             return CompletedProcess('', 0, "Language is not supported", None)
 
-        args = (
-            lang["path"],
-            lang["args"],
-            userland_resolve(filename),
-        )
-        compact_args = list(filter(None, args))
+        fullname = userland_resolve(filename)
         nsjail_args = (
             "--bindmount",
             f"{USERLAND_PATH}/{username}:{USERLAND_PATH}",
         )
+
+        if lang.get("compile"):
+            compile_args = (
+                lang["compile"],
+                *lang.get("compile_args", ()),
+                fullname,
+            )
+            compact_compile_args = list(filter(None, compile_args))
+            self.jail(args=compact_compile_args, nsjail_args=nsjail_args)
+
+        args = (
+            lang["run"],
+            *lang.get("args", ()),
+            fullname,
+        )
+        compact_args = list(filter(None, args))
 
         return self.jail(args=compact_args, nsjail_args=nsjail_args)
 
